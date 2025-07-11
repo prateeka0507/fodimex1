@@ -14,8 +14,23 @@ const contactRoute = require('./routes/contact');
 const app = express();
 
 // Middleware
-const allowedOrigin = process.env.FRONTEND_URL || '*';
-app.use(cors({ origin: allowedOrigin, credentials: true }));
+const allowedOrigins = [
+  'http://localhost:3000',
+  'https://fodimex1.vercel.app'
+];
+
+app.use(cors({
+  origin: function (origin, callback) {
+    // allow requests with no origin (like mobile apps, curl, etc.)
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.indexOf(origin) !== -1) {
+      return callback(null, true);
+    } else {
+      return callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true
+}));
 app.use(express.json());
 
 // Routes
