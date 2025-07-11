@@ -47,7 +47,7 @@ function CheckoutForm() {
     }
     try {
       // 1. Create PaymentIntent on backend
-      const res = await fetch('http://localhost:5000/api/stripe/create-payment-intent', {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/stripe/create-payment-intent`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
