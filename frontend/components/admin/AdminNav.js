@@ -1,5 +1,5 @@
 import Link from 'next/link';
-
+   
 export default function AdminNav() {
   return (
     <nav className="mb-6 flex gap-4 border-b pb-2">
