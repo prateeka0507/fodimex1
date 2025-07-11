@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 import { useState } from 'react';
@@ -10,22 +11,25 @@ export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
-    <header className="bg-white shadow-md sticky top-0 z-50">
+    <header className="bg-green-900 shadow-md sticky top-0 z-50">
       <div className="container mx-auto flex items-center justify-between py-4 px-6">
-        <Link href="/" className="text-2xl font-bold text-blue-600">Fodimex</Link>
+        <Link href="/" className="flex items-center space-x-2">
+          <Image src="/logo.png" alt="Fodimex Logo" width={48} height={48} priority />
+          <span className="text-2xl font-bold text-green-100">Fodimex</span>
+        </Link>
         <nav className="space-x-4 hidden md:flex items-center">
-          <Link href="/" className="hover:text-blue-600">Home</Link>
-          <Link href="/catalog" className="hover:text-blue-600">Catalog</Link>
-          <Link href="/cart" className="hover:text-blue-600 inline-flex items-center">
+          <Link href="/" className="hover:text-green-300 text-green-100">Home</Link>
+          <Link href="/catalog" className="hover:text-green-300 text-green-100">Catalog</Link>
+          <Link href="/cart" className="hover:text-green-300 text-green-100 inline-flex items-center">
             Cart
             {cartCount > 0 && (
-              <span className="ml-1 bg-blue-600 text-white text-xs rounded-full px-2 py-0.5">{cartCount}</span>
+              <span className="ml-1 bg-green-600 text-white text-xs rounded-full px-2 py-0.5">{cartCount}</span>
             )}
           </Link>
-          <Link href="/account" className="hover:text-blue-600">Account</Link>
-          <Link href="/about" className="hover:text-blue-600">About</Link>
-          <Link href="/contact" className="hover:text-blue-600">Contact</Link>
-          <Link href="/blog" className="hover:text-blue-600">Blog</Link>
+          <Link href="/account" className="hover:text-green-300 text-green-100">Account</Link>
+          <Link href="/about" className="hover:text-green-300 text-green-100">About</Link>
+          <Link href="/contact" className="hover:text-green-300 text-green-100">Contact</Link>
+          <Link href="/blog" className="hover:text-green-300 text-green-100">Blog</Link>
           {user ? (
             <>
               <span className="ml-4 text-gray-700">Hi, {user.name || user.email}</span>
