@@ -14,6 +14,7 @@ export default function Contact() {
     e.preventDefault();
     setLoading(true);
     setError('');
+    setSent(false);
     try {
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/contact`, {
         method: 'POST',
@@ -21,11 +22,17 @@ export default function Contact() {
         body: JSON.stringify(form),
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.message || 'Failed to send message');
-      setSent(true);
-      setForm({ name: '', email: '', message: '' });
+      if (!res.ok) {
+        setError(data.message || 'Failed to send message');
+        setSent(false);
+      } else {
+        setSent(true);
+        setForm({ name: '', email: '', message: '' });
+        setError('');
+      }
     } catch (err) {
-      setError(err.message);
+      setError(err.message || 'Failed to send message');
+      setSent(false);
     } finally {
       setLoading(false);
     }
