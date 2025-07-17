@@ -20,27 +20,19 @@ export default function ProductCard({ product }) {
   };
 
   return (
-    <div className="bg-white rounded shadow p-4 flex flex-col relative">
-      <button
-        onClick={handleWishlist}
-        className={`absolute top-2 right-2 text-2xl ${inWishlist ? 'text-red-500' : 'text-gray-300'} z-10`}
-        title={inWishlist ? 'Remove from Wishlist' : 'Add to Wishlist'}
-      >
-        {inWishlist ? '♥' : '♡'}
-      </button>
+    <div className="bg-white rounded-2xl shadow-lg border border-[#e8ded2] p-6 flex flex-col relative transition-transform transform hover:-translate-y-1 hover:shadow-2xl" style={{ minHeight: 420 }}>
       <img
         src={product.image || '/placeholder.png'}
         alt={product.name}
-        className="w-full h-48 object-cover rounded mb-4"
+        className="w-40 h-40 object-cover rounded-xl mx-auto mb-4 border-4 border-[#f5eee6] bg-[#f5eee6]"
       />
-      <h2 className="text-lg font-semibold mb-2">{product.name}</h2>
-      <p className="text-blue-600 font-bold mb-2">${product.price}</p>
-      <Link href={`/product/${product.id}`} className="mt-auto text-center bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 mb-2">View Details</Link>
+      <h2 className="text-xl font-bold mb-1 text-[#3d2c1e] text-center">{product.name}</h2>
+      <p className="text-[#7c6f5a] text-center mb-2" style={{ minHeight: 40 }}>{product.description}</p>
+      <div className="text-[#b48a4a] font-bold text-lg text-center mb-4">₹{product.price}</div>
       <button
-        onClick={() => addToCart(product)}
-        className="text-center bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
+        className="mt-auto w-full bg-[#b48a4a] text-white px-4 py-2 rounded-lg font-semibold hover:bg-[#a07628] transition mb-2"
       >
-        Add to Cart
+        Select
       </button>
     </div>
   );

@@ -4,34 +4,49 @@ import SearchFilterBar from '../components/SearchFilterBar';
 import { productsAPI } from '../services/api';
 
 export default function Catalog() {
-  const [products, setProducts] = useState([]);
-  const [search, setSearch] = useState('');
-  const [category, setCategory] = useState('');
-  const [loading, setLoading] = useState(true);
-  const [categories, setCategories] = useState([]);
-
-  useEffect(() => {
-    setLoading(true);
-    productsAPI.getAll({ search, category })
-      .then(data => {
-        setProducts(data.products);
-        // Extract unique categories from products
-        setCategories([...new Set(data.products.map(p => p.category))]);
-      })
-      .finally(() => setLoading(false));
-  }, [search, category]);
+  // Static product list for the catalog
+  const products = [
+    {
+      id: 1,
+      name: 'Soap',
+      image: '/soap box design.png',
+      price: 199,
+      description: 'Gentle, nourishing soap made with natural ingredients.'
+    },
+    {
+      id: 2,
+      name: 'Tooth Powder',
+      image: '/tubes.png',
+      price: 149,
+      description: 'Mineral-rich tooth powder for oral health.'
+    },
+    {
+      id: 3,
+      name: 'Face Scrub',
+      image: '/cover.jpeg',
+      price: 249,
+      description: 'Exfoliate naturally for smooth, radiant skin.'
+    },
+    {
+      id: 4,
+      name: 'Face Wash',
+      image: '/cover.jpeg',
+      price: 199,
+      description: 'A refreshing face wash that cleanses deeply.'
+    },
+    {
+      id: 5,
+      name: 'Raw Egg Shell Powder',
+      image: '/tubes.png',
+      price: 99,
+      description: 'Pure, finely ground egg shell powder for versatile use.'
+    }
+  ];
 
   return (
-    <div className="py-8">
-      <h1 className="text-3xl font-bold mb-6">Product Catalog</h1>
-      <SearchFilterBar
-        search={search}
-        category={category}
-        onSearch={setSearch}
-        onCategoryChange={setCategory}
-        categories={categories}
-      />
-      {loading ? <div>Loading...</div> : <ProductList products={products} />}
+    <div className="py-8 min-h-screen" style={{ background: '#f5eee6' }}>
+      <h1 className="text-3xl font-bold mb-6 text-center">Product Catalog</h1>
+      <ProductList products={products} />
     </div>
   );
 } 
