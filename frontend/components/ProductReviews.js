@@ -77,38 +77,41 @@ export default function ProductReviews({ productId }) {
   const avgRating = reviews.length ? (reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length).toFixed(1) : null;
 
   return (
-    <div className="mt-8">
-      <h2 className="text-xl font-bold mb-2">Customer Reviews</h2>
+    <div className="mt-8 px-2 sm:px-0">
+      <h2 className="text-xl font-bold mb-2 text-[#2E251D]">Customer Reviews</h2>
       {loading ? (
         <div>Loading reviews...</div>
       ) : error ? (
         <div className="text-red-600">{error}</div>
       ) : (
         <>
-          <div className="flex items-center mb-2">
+          <div className="flex flex-col sm:flex-row items-center mb-2 gap-2">
             <span className="text-lg font-semibold mr-2">{avgRating || 'No ratings yet'}</span>
             <StarRating value={avgRating ? Math.round(avgRating) : 0} readOnly />
             <span className="ml-2 text-gray-500">({reviews.length} review{reviews.length !== 1 ? 's' : ''})</span>
           </div>
           {user && !myReview && (
-            <form onSubmit={handleSubmit} className="mb-4 bg-gray-50 p-4 rounded">
-              <div className="mb-2">Your Rating:</div>
+            <form onSubmit={handleSubmit} className="mb-4 bg-gray-50 p-4 rounded flex flex-col gap-2">
+              <div className="mb-1 text-base text-[#2E251D]">Your Rating:</div>
               <StarRating value={form.rating} onChange={handleRatingChange} />
               <textarea
                 name="comment"
                 value={form.comment}
                 onChange={handleFormChange}
                 placeholder="Write a review (optional)"
-                className="border rounded px-3 py-2 w-full mt-2"
+                className="border rounded px-3 py-2 w-full mt-2 text-base"
               />
-              <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded mt-2" disabled={formLoading || !form.rating}>
+              <button
+                type="submit"
+                className="w-full bg-[#b48a4a] text-white px-6 py-2 rounded-lg font-semibold hover:bg-[#a07628] transition mt-2 shadow text-base"
+                disabled={formLoading || !form.rating}>
                 {formLoading ? 'Submitting...' : 'Submit Review'}
               </button>
-              {formMsg && <div className="mt-2 text-green-600">{formMsg}</div>}
+              {formMsg && <div className="mt-2 text-green-600 text-center">{formMsg}</div>}
             </form>
           )}
           {user && myReview && (
-            <div className="mb-4 text-green-700">You have already reviewed this product.</div>
+            <div className="mb-4 text-green-700 text-center">You have already reviewed this product.</div>
           )}
           <div>
             {reviews.length === 0 ? (
@@ -116,13 +119,13 @@ export default function ProductReviews({ productId }) {
             ) : (
               <ul>
                 {reviews.map(r => (
-                  <li key={r.id} className="mb-4 border-b pb-2">
-                    <div className="flex items-center mb-1">
+                  <li key={r.id} className="mb-4 border-b pb-2 px-1 sm:px-0">
+                    <div className="flex flex-col sm:flex-row items-center mb-1 gap-2">
                       <StarRating value={r.rating} readOnly />
-                      <span className="ml-2 font-semibold">{r.User ? r.User.name : 'User'}</span>
-                      <span className="ml-2 text-gray-500 text-xs">{new Date(r.createdAt).toLocaleDateString()}</span>
+                      <span className="font-semibold text-[#2E251D]">{r.User ? r.User.name : 'User'}</span>
+                      <span className="text-gray-500 text-xs">{new Date(r.createdAt).toLocaleDateString()}</span>
                     </div>
-                    {r.comment && <div className="text-gray-700">{r.comment}</div>}
+                    {r.comment && <div className="text-gray-700 text-base break-words">{r.comment}</div>}
                   </li>
                 ))}
               </ul>

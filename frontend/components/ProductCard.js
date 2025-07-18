@@ -29,25 +29,25 @@ export default function ProductCard({ product }) {
   };
 
   return (
-    <div className="bg-white rounded-2xl shadow-lg border border-[#e8ded2] p-6 flex flex-col relative transition-transform transform hover:-translate-y-1 hover:shadow-2xl" style={{ minHeight: 420 }}>
+    <div className="bg-white rounded-2xl shadow-lg border border-[#e8ded2] p-4 sm:p-6 flex flex-col relative transition-transform transform hover:-translate-y-1 hover:shadow-2xl w-full max-w-xs mx-auto mb-4" style={{ minHeight: 420 }}>
       <img
         src={product.image || '/placeholder.png'}
         alt={product.name}
-        className="w-40 h-40 object-cover rounded-xl mx-auto mb-4 border-4 border-[#f5eee6] bg-[#f5eee6]"
+        className="w-32 h-32 sm:w-40 sm:h-40 object-cover rounded-xl mx-auto mb-4 border-4 border-[#f5eee6] bg-[#f5eee6]"
       />
-      <h2 className="text-xl font-bold mb-1 text-[#3d2c1e] text-center">{product.name}</h2>
-      <p className="text-[#7c6f5a] text-center mb-2" style={{ minHeight: 40 }}>{product.description}</p>
-      <div className="text-[#b48a4a] font-bold text-lg text-center mb-4">₹{product.price}</div>
+      <h2 className="text-lg sm:text-xl font-bold mb-1 text-[#3d2c1e] text-center">{product.name}</h2>
+      <p className="text-[#7c6f5a] text-center mb-2 text-sm sm:text-base" style={{ minHeight: 40 }}>{product.description}</p>
+      <div className="text-[#b48a4a] font-bold text-base sm:text-lg text-center mb-4">₹{product.price}</div>
       <Link
         href={`/product/${product.id}`}
-        className="mt-auto w-full bg-[#b48a4a] text-white px-4 py-2 rounded-lg font-semibold hover:bg-[#a07628] transition mb-2 text-center"
+        className="mt-auto w-full bg-[#b48a4a] text-white px-4 py-3 rounded-lg font-semibold hover:bg-[#a07628] transition mb-2 text-center text-base sm:text-lg"
         onClick={handleSelect}
       >
         Select
       </Link>
       {showModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
-          <div className="bg-white rounded-xl shadow-lg p-8 max-w-xs w-full text-center relative">
+        <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 px-2">
+          <div className="bg-white rounded-xl shadow-lg p-6 max-w-xs w-full text-center relative">
             <button className="absolute top-2 right-2 text-gray-400 hover:text-gray-700 text-2xl" onClick={() => setShowModal(false)}>&times;</button>
             <h3 className="text-xl font-bold mb-2 text-[#2E251D]">Login Required</h3>
             <p className="mb-4 text-[#7c6f5a]">Please log in or register to select and add products to your cart.</p>

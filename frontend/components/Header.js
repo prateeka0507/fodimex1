@@ -22,7 +22,7 @@ export default function Header() {
           <Image src="/logo.png" alt="Fodimex Logo" width={48} height={48} priority />
           <span className="text-2xl font-bold text-white">Fodimex</span>
         </Link>
-        <nav className="space-x-4 hidden md:flex items-center">
+        <nav className="space-x-4 hidden md:flex items-center text-base md:text-lg">
           <Link href="/" className="hover:text-[#b48a4a] text-white">Home</Link>
           <Link href="/catalog" className="hover:text-[#b48a4a] text-white">Catalog</Link>
           <Link href="/cart" className="hover:text-[#b48a4a] text-white inline-flex items-center">
@@ -42,9 +42,9 @@ export default function Header() {
                 Admin ▾
               </button>
               {adminDropdown && (
-                <div className="absolute right-0 mt-2 w-40 bg-white rounded shadow-lg z-50 text-[#2E251D]">
-                  <Link href="/admin/products" className="block px-4 py-2 hover:bg-[#f5eee6]" onClick={() => setAdminDropdown(false)}>Manage Products</Link>
-                  <Link href="/admin/orders" className="block px-4 py-2 hover:bg-[#f5eee6]" onClick={() => setAdminDropdown(false)}>Order Management</Link>
+                <div className="absolute right-0 mt-2 w-56 bg-white rounded shadow-lg z-50 text-[#2E251D] py-2">
+                  <Link href="/admin/products" className="block px-6 py-3 hover:bg-[#f5eee6] text-lg" onClick={() => setAdminDropdown(false)}>Manage Products</Link>
+                  <Link href="/admin/orders" className="block px-6 py-3 hover:bg-[#f5eee6] text-lg" onClick={() => setAdminDropdown(false)}>Order Management</Link>
                 </div>
               )}
             </div>
@@ -78,7 +78,7 @@ export default function Header() {
         </nav>
         {/* Mobile menu button */}
         <div className="md:hidden">
-          <button onClick={() => setMenuOpen(!menuOpen)} aria-label="Toggle menu">
+          <button onClick={() => setMenuOpen(!menuOpen)} aria-label="Toggle menu" className="p-3">
             <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
             </svg>
@@ -87,7 +87,7 @@ export default function Header() {
       </div>
       {/* Mobile menu */}
       {menuOpen && (
-        <nav className="md:hidden bg-[#2E251D] border-t px-6 pb-4 flex flex-col space-y-2">
+        <nav className="md:hidden bg-[#2E251D] border-t px-4 pb-6 flex flex-col space-y-3 text-lg">
           <Link href="/" className="hover:text-[#b48a4a] text-white" onClick={() => setMenuOpen(false)}>Home</Link>
           <Link href="/catalog" className="hover:text-[#b48a4a] text-white" onClick={() => setMenuOpen(false)}>Catalog</Link>
           <Link href="/cart" className="hover:text-[#b48a4a] text-white inline-flex items-center" onClick={() => setMenuOpen(false)}>
@@ -107,9 +107,9 @@ export default function Header() {
                 Admin ▾
               </button>
               {adminDropdown && (
-                <div className="mt-2 w-40 bg-white rounded shadow-lg z-50 text-[#2E251D]">
-                  <Link href="/admin/products" className="block px-4 py-2 hover:bg-[#f5eee6]" onClick={() => { setAdminDropdown(false); setMenuOpen(false); }}>Manage Products</Link>
-                  <Link href="/admin/orders" className="block px-4 py-2 hover:bg-[#f5eee6]" onClick={() => { setAdminDropdown(false); setMenuOpen(false); }}>Order Management</Link>
+                <div className="mt-2 w-56 bg-white rounded shadow-lg z-50 text-[#2E251D] py-2">
+                  <Link href="/admin/products" className="block px-6 py-3 hover:bg-[#f5eee6] text-lg" onClick={() => { setAdminDropdown(false); setMenuOpen(false); }}>Manage Products</Link>
+                  <Link href="/admin/orders" className="block px-6 py-3 hover:bg-[#f5eee6] text-lg" onClick={() => { setAdminDropdown(false); setMenuOpen(false); }}>Order Management</Link>
                 </div>
               )}
             </div>
