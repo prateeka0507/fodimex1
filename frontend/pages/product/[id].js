@@ -17,6 +17,7 @@ export default function ProductPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [added, setAdded] = useState(false);
+  const [showModal, setShowModal] = useState(false);
 
   const inWishlist = wishlist.some(item => item.productId === product?.id);
 
@@ -44,6 +45,10 @@ export default function ProductPage() {
   if (!product) return null;
 
   const handleAddToCart = () => {
+    if (!user) {
+      setShowModal(true);
+      return;
+    }
     addToCart(product);
     setAdded(true);
   };
@@ -75,6 +80,17 @@ export default function ProductPage() {
           >
             Add to Cart
           </button>
+        )}
+        {showModal && (
+          <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
+            <div className="bg-white rounded-xl shadow-lg p-8 max-w-xs w-full text-center relative">
+              <button className="absolute top-2 right-2 text-gray-400 hover:text-gray-700 text-2xl" onClick={() => setShowModal(false)}>&times;</button>
+              <h3 className="text-xl font-bold mb-2 text-[#2E251D]">Login Required</h3>
+              <p className="mb-4 text-[#7c6f5a]">Please log in or register to add products to your cart.</p>
+              <Link href="/login" className="block bg-[#b48a4a] text-white px-4 py-2 rounded-lg font-semibold hover:bg-[#a07628] mb-2">Login</Link>
+              <Link href="/register" className="block bg-[#ede5d8] text-[#2E251D] px-4 py-2 rounded-lg font-semibold hover:bg-[#e8ded2]">Register</Link>
+            </div>
+          </div>
         )}
         {added && <div className="text-green-600 text-center mb-2 font-semibold">Added to cart!</div>}
         <ProductReviews productId={product.id} />
