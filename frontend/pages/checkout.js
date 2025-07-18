@@ -1,10 +1,10 @@
 import { useCart } from '../context/CartContext';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { ordersAPI } from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import { loadStripe } from '@stripe/stripe-js';
-import { Elements, CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
+import { Elements, PaymentElement, useStripe, useElements } from '@stripe/react-stripe-js';
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY);
 
@@ -57,18 +57,17 @@ function CheckoutForm() {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || 'Failed to create payment intent');
-      // 2. Confirm payment on frontend
-      const result = await stripe.confirmCardPayment(data.clientSecret, {
-        payment_method: {
-          card: elements.getElement(CardElement),
-          billing_details: {
-            name: form.name,
-            email: form.email,
-            phone: form.phone,
-            address: { line1: form.address }
-          }
+
+      // 2. Mount PaymentElement with clientSecret
+      // This is handled by the <Elements> wrapper with the stripePromise and options
+      // 3. Confirm payment on frontend using PaymentElement
+      const result = await stripe.confirmPayment({
+        elements,
+        confirmParams: {
+          return_url: `${window.location.origin}/order-confirmation`
         }
       });
+
       if (result.error) {
         setError(result.error.message);
       } else if (result.paymentIntent && result.paymentIntent.status === 'succeeded') {
@@ -95,7 +94,7 @@ function CheckoutForm() {
       <h2 className="text-xl font-semibold mb-4 mt-6">Payment Information</h2>
       <div className="mb-4 text-gray-500">Pay securely with card, UPI, or wallets (Stripe Test Mode)</div>
       <div className="mb-4 bg-gray-50 p-3 rounded">
-        <CardElement options={{ hidePostalCode: true }} />
+        <PaymentElement />
       </div>
       {error && <div className="text-red-600 mb-2">{error}</div>}
       {success && <div className="text-green-600 mb-2">Payment successful! Redirecting...</div>}
@@ -109,12 +108,39 @@ function CheckoutForm() {
 export default function Checkout() {
   const { cart } = useCart();
   const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  const [clientSecret, setClientSecret] = useState(null);
+  const [form, setForm] = useState({ name: '', address: '', email: '', phone: '' });
+
+  // Fetch clientSecret when cart or form changes
+  useEffect(() => {
+    if (cart.length === 0) return;
+    const fetchClientSecret = async () => {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/stripe/create-payment-intent`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          items: cart.map(item => ({ productId: item.id, quantity: item.quantity })),
+          shippingInfo: form
+        })
+      });
+      const data = await res.json();
+      if (res.ok) setClientSecret(data.clientSecret);
+    };
+    fetchClientSecret();
+  }, [cart, form]);
+
+  const options = clientSecret ? { clientSecret } : undefined;
+
   return (
     <div className="py-8 max-w-2xl mx-auto">
       <h1 className="text-3xl font-bold mb-6">Checkout</h1>
-      <Elements stripe={stripePromise}>
-        <CheckoutForm />
-      </Elements>
+      {clientSecret ? (
+        <Elements stripe={stripePromise} options={options}>
+          <CheckoutForm />
+        </Elements>
+      ) : (
+        <div>Loading payment options...</div>
+      )}
       <div className="bg-gray-50 p-4 rounded shadow">
         <h2 className="text-lg font-semibold mb-2">Order Summary</h2>
         {cart.length === 0 ? (
@@ -124,12 +150,12 @@ export default function Checkout() {
             {cart.map(item => (
               <li key={item.id} className="flex justify-between">
                 <span>{item.name} x {item.quantity}</span>
-                <span>${(item.price * item.quantity).toFixed(2)}</span>
+                <span>₹{(item.price * item.quantity).toFixed(2)}</span>
               </li>
             ))}
           </ul>
         )}
-        <div className="font-bold">Total: ${total.toFixed(2)}</div>
+        <div className="font-bold">Total: ₹{total.toFixed(2)}</div>
       </div>
     </div>
   );
