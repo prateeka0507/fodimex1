@@ -2,13 +2,18 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
-import { useState } from 'react';
+import { useState, Fragment } from 'react';
+import { UserIcon } from '@heroicons/react/24/outline';
 
 export default function Header() {
   const { cart } = useCart();
   const { user, logout } = useAuth();
   const cartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [accountDropdown, setAccountDropdown] = useState(false);
+  const [adminDropdown, setAdminDropdown] = useState(false);
+
+  const isAdmin = user && user.email === 'prateekakathiresan@gmail.com';
 
   return (
     <header className="bg-[#2E251D] shadow-md sticky top-0 z-50">
@@ -26,22 +31,52 @@ export default function Header() {
               <span className="ml-1 bg-[#b48a4a] text-white text-xs rounded-full px-2 py-0.5">{cartCount}</span>
             )}
           </Link>
-          <Link href="/account" className="hover:text-[#b48a4a] text-white">Account</Link>
           <Link href="/about" className="hover:text-[#b48a4a] text-white">About</Link>
           <Link href="/contact" className="hover:text-[#b48a4a] text-white">Contact</Link>
-          <Link href="/blog" className="hover:text-[#b48a4a] text-white">Blog</Link>
-          {user ? (
-            <>
-              <span className="ml-4 text-[#b48a4a]">Hi, {user.name || user.email}</span>
-              <button onClick={logout} className="ml-2 bg-[#b48a4a] text-white px-3 py-1 rounded hover:bg-[#a07628]">Logout</button>
-            </>
-          ) : (
-            <>
-              <Link href="/login" className="ml-4 hover:text-[#b48a4a] text-white">Login</Link>
-              <Link href="/register" className="hover:text-[#b48a4a] text-white">Register</Link>
-            </>
+          {isAdmin && (
+            <div className="relative inline-block">
+              <button
+                onClick={() => setAdminDropdown(!adminDropdown)}
+                className="hover:text-[#b48a4a] text-white focus:outline-none px-2"
+              >
+                Admin ▾
+              </button>
+              {adminDropdown && (
+                <div className="absolute right-0 mt-2 w-40 bg-white rounded shadow-lg z-50 text-[#2E251D]">
+                  <Link href="/admin/products" className="block px-4 py-2 hover:bg-[#f5eee6]" onClick={() => setAdminDropdown(false)}>Manage Products</Link>
+                  <Link href="/admin/orders" className="block px-4 py-2 hover:bg-[#f5eee6]" onClick={() => setAdminDropdown(false)}>Order Management</Link>
+                </div>
+              )}
+            </div>
           )}
+          <div className="relative inline-block">
+            <button
+              onClick={() => setAccountDropdown(!accountDropdown)}
+              className="hover:text-[#b48a4a] text-white focus:outline-none px-2 flex items-center"
+              aria-label="Account menu"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-7 h-7">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.5 20.25a7.5 7.5 0 0115 0v.25a.75.75 0 01-.75.75h-13.5a.75.75 0 01-.75-.75v-.25z" />
+              </svg>
+            </button>
+            {accountDropdown && (
+              <div className="absolute right-0 mt-2 w-40 bg-white rounded shadow-lg z-50 text-[#2E251D]">
+                {!user ? (
+                  <>
+                    <Link href="/login" className="block px-4 py-2 hover:bg-[#f5eee6]" onClick={() => setAccountDropdown(false)}>Login</Link>
+                    <Link href="/register" className="block px-4 py-2 hover:bg-[#f5eee6]" onClick={() => setAccountDropdown(false)}>Register</Link>
+                  </>
+                ) : (
+                  <>
+                    <Link href="/account" className="block px-4 py-2 hover:bg-[#f5eee6]" onClick={() => setAccountDropdown(false)}>Account</Link>
+                    <button onClick={() => { logout(); setAccountDropdown(false); }} className="block w-full text-left px-4 py-2 hover:bg-[#f5eee6]">Logout</button>
+                  </>
+                )}
+              </div>
+            )}
+          </div>
         </nav>
+        {/* Mobile menu button */}
         <div className="md:hidden">
           <button onClick={() => setMenuOpen(!menuOpen)} aria-label="Toggle menu">
             <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -61,21 +96,50 @@ export default function Header() {
               <span className="ml-1 bg-[#b48a4a] text-white text-xs rounded-full px-2 py-0.5">{cartCount}</span>
             )}
           </Link>
-          <Link href="/account" className="hover:text-[#b48a4a] text-white" onClick={() => setMenuOpen(false)}>Account</Link>
           <Link href="/about" className="hover:text-[#b48a4a] text-white" onClick={() => setMenuOpen(false)}>About</Link>
           <Link href="/contact" className="hover:text-[#b48a4a] text-white" onClick={() => setMenuOpen(false)}>Contact</Link>
-          <Link href="/blog" className="hover:text-[#b48a4a] text-white" onClick={() => setMenuOpen(false)}>Blog</Link>
-          {user ? (
-            <>
-              <span className="text-[#b48a4a]">Hi, {user.name || user.email}</span>
-              <button onClick={() => { logout(); setMenuOpen(false); }} className="bg-[#b48a4a] text-white px-3 py-1 rounded hover:bg-[#a07628] mt-2">Logout</button>
-            </>
-          ) : (
-            <>
-              <Link href="/login" className="hover:text-[#b48a4a] text-white" onClick={() => setMenuOpen(false)}>Login</Link>
-              <Link href="/register" className="hover:text-[#b48a4a] text-white" onClick={() => setMenuOpen(false)}>Register</Link>
-            </>
+          {isAdmin && (
+            <div className="relative">
+              <button
+                onClick={() => setAdminDropdown(!adminDropdown)}
+                className="hover:text-[#b48a4a] text-white focus:outline-none px-2 w-full text-left"
+              >
+                Admin ▾
+              </button>
+              {adminDropdown && (
+                <div className="mt-2 w-40 bg-white rounded shadow-lg z-50 text-[#2E251D]">
+                  <Link href="/admin/products" className="block px-4 py-2 hover:bg-[#f5eee6]" onClick={() => { setAdminDropdown(false); setMenuOpen(false); }}>Manage Products</Link>
+                  <Link href="/admin/orders" className="block px-4 py-2 hover:bg-[#f5eee6]" onClick={() => { setAdminDropdown(false); setMenuOpen(false); }}>Order Management</Link>
+                </div>
+              )}
+            </div>
           )}
+          <div className="relative">
+            <button
+              onClick={() => setAccountDropdown(!accountDropdown)}
+              className="hover:text-[#b48a4a] text-white focus:outline-none px-2 w-full text-left flex items-center"
+              aria-label="Account menu"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-7 h-7">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.5 20.25a7.5 7.5 0 0115 0v.25a.75.75 0 01-.75.75h-13.5a.75.75 0 01-.75-.75v-.25z" />
+              </svg>
+            </button>
+            {accountDropdown && (
+              <div className="mt-2 w-40 bg-white rounded shadow-lg z-50 text-[#2E251D]">
+                {!user ? (
+                  <>
+                    <Link href="/login" className="block px-4 py-2 hover:bg-[#f5eee6]" onClick={() => { setAccountDropdown(false); setMenuOpen(false); }}>Login</Link>
+                    <Link href="/register" className="block px-4 py-2 hover:bg-[#f5eee6]" onClick={() => { setAccountDropdown(false); setMenuOpen(false); }}>Register</Link>
+                  </>
+                ) : (
+                  <>
+                    <Link href="/account" className="block px-4 py-2 hover:bg-[#f5eee6]" onClick={() => { setAccountDropdown(false); setMenuOpen(false); }}>Account</Link>
+                    <button onClick={() => { logout(); setAccountDropdown(false); setMenuOpen(false); }} className="block w-full text-left px-4 py-2 hover:bg-[#f5eee6]">Logout</button>
+                  </>
+                )}
+              </div>
+            )}
+          </div>
         </nav>
       )}
     </header>

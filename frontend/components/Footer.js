@@ -8,7 +8,6 @@ export default function Footer() {
         <nav className="space-x-4 mt-2 md:mt-0">
           <Link href="/about" className="hover:text-[#b48a4a] text-[#f5eee6]">About</Link>
           <Link href="/contact" className="hover:text-[#b48a4a] text-[#f5eee6]">Contact</Link>
-          <Link href="/blog" className="hover:text-[#b48a4a] text-[#f5eee6]">Blog</Link>
         </nav>
       </div>
     </footer>

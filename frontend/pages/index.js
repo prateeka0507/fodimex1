@@ -1,5 +1,7 @@
 import ProductList from '../components/ProductList';
 import Link from 'next/link';
+import { useState, useEffect } from 'react';
+import { productsAPI } from '../services/api';
 
 const featuredProducts = [
   {
@@ -39,7 +41,46 @@ const featuredProducts = [
   }
 ];
 
+const reviews = [
+  {
+    image: '/cover.jpeg',
+    name: 'Maria',
+    verified: true,
+    title: 'I’m comfortable in my skin again!',
+    text: 'After having my daughter two years ago, I’ve struggled with rosacea issues on my face, particularly on my eye lids. What a difference a month (and Fodimex) can make!'
+  },
+  {
+    image: '/soap box design.png',
+    name: 'Ellen M',
+    verified: false,
+    title: 'Amazing',
+    text: 'I cannot recommend this enough, I\'ve been using it since January along with the tallow and black seed oil and I will never put anything else on my skin again.'
+  },
+  {
+    image: '/tubes.png',
+    name: 'Jay',
+    verified: false,
+    title: 'I love it',
+    text: 'It has been one week since I purchased this product and I have already noticed a difference with my skin. Highly recommended!'
+  }
+];
+
 export default function Home() {
+  const [reviewIndex, setReviewIndex] = useState(0);
+  const [bestsellers, setBestsellers] = useState([]);
+  const [loadingBestsellers, setLoadingBestsellers] = useState(true);
+  const reviewsToShow = 2;
+  const maxIndex = reviews.length - reviewsToShow;
+  const handlePrev = () => setReviewIndex(i => Math.max(0, i - 1));
+  const handleNext = () => setReviewIndex(i => Math.min(maxIndex, i + 1));
+
+  useEffect(() => {
+    setLoadingBestsellers(true);
+    productsAPI.getAll({ limit: 3 })
+      .then(data => setBestsellers(data.products))
+      .finally(() => setLoadingBestsellers(false));
+  }, []);
+
   return (
     <div className="min-h-screen bg-[#f5eee6] flex flex-col">
       {/* Announcement Bar */}
@@ -68,6 +109,10 @@ export default function Home() {
           }
         `}</style>
       </div>
+      {/* Large Hero Image Section */}
+      <div className="w-full flex justify-center items-center bg-[#f5eee6] py-8">
+        <img src="/cover.jpeg" alt="Hero" className="w-full max-w-5xl h-80 object-cover rounded-2xl shadow-lg border-4 border-[#e8ded2]" />
+      </div>
       {/* Hero Section */}
       <section className="w-full flex flex-col items-center justify-center py-16 px-4 text-center bg-[#f5eee6]">
         <img src="/logo.png" alt="Fodimex Logo" className="w-24 h-24 mx-auto mb-4" />
@@ -78,17 +123,21 @@ export default function Home() {
       {/* Featured Products */}
       <section className="w-full max-w-6xl mx-auto px-4 py-12">
         <h2 className="text-3xl font-bold text-[#2E251D] mb-8 text-center">Shop our bestsellers</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
-          {featuredProducts.map(product => (
-            <div key={product.id} className="bg-white rounded-2xl shadow-lg border border-[#e8ded2] p-6 flex flex-col items-center text-center transition-transform transform hover:-translate-y-1 hover:shadow-2xl">
-              <img src={product.image} alt={product.name} className="w-32 h-32 object-cover rounded-xl mb-4 border-4 border-[#f5eee6] bg-[#f5eee6]" />
-              <h3 className="text-2xl font-bold text-[#3d2c1e] mb-2">{product.name}</h3>
-              <p className="text-[#7c6f5a] mb-2">{product.description}</p>
-              <div className="text-[#b48a4a] font-bold text-lg mb-4">₹{product.price}</div>
-              <Link href="/catalog" className="w-full bg-[#b48a4a] text-white px-4 py-2 rounded-lg font-semibold hover:bg-[#a07628] transition">Select</Link>
-            </div>
-          ))}
-        </div>
+        {loadingBestsellers ? (
+          <div className="text-center text-[#b48a4a]">Loading...</div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
+            {bestsellers.map(product => (
+              <div key={product.id} className="bg-white rounded-2xl shadow-lg border border-[#e8ded2] p-6 flex flex-col items-center text-center transition-transform transform hover:-translate-y-1 hover:shadow-2xl">
+                <img src={product.image} alt={product.name} className="w-32 h-32 object-cover rounded-xl mb-4 border-4 border-[#f5eee6] bg-[#f5eee6]" />
+                <h3 className="text-2xl font-bold text-[#3d2c1e] mb-2">{product.name}</h3>
+                <p className="text-[#7c6f5a] mb-2">{product.description}</p>
+                <div className="text-[#b48a4a] font-bold text-lg mb-4">₹{product.price}</div>
+                <Link href={`/product/${product.id}`} className="w-full bg-[#b48a4a] text-white px-4 py-2 rounded-lg font-semibold hover:bg-[#a07628] transition">Select</Link>
+              </div>
+            ))}
+          </div>
+        )}
       </section>
       {/* Brand Values / Why Choose Us */}
       <section className="w-full bg-[#ede5d8] py-12 px-4">
@@ -109,6 +158,25 @@ export default function Home() {
             <h4 className="font-bold text-[#3d2c1e] mb-1">Eco-Friendly</h4>
             <p className="text-[#7c6f5a]">Sustainable, cruelty-free, and kind to the planet—just as nature intended.</p>
           </div>
+        </div>
+      </section>
+      {/* Reviews Carousel Section */}
+      <section className="w-full bg-[#f5eee6] py-12">
+        <h2 className="text-3xl font-bold text-center text-[#2E251D] mb-8">Trusted by 80,000+ customers</h2>
+        <div className="flex items-center justify-center gap-4">
+          <button onClick={handlePrev} disabled={reviewIndex === 0} className="text-3xl px-2 py-1 rounded-full bg-white shadow hover:bg-[#ede5d8] disabled:opacity-30">&#8592;</button>
+          <div className="flex gap-8">
+            {reviews.slice(reviewIndex, reviewIndex + reviewsToShow).map((review, idx) => (
+              <div key={idx} className="bg-white rounded-2xl shadow-lg p-6 max-w-xs flex flex-col items-center border border-[#e8ded2]">
+                <img src={review.image} alt={review.name} className="w-24 h-24 object-cover rounded-full mb-4" />
+                <div className="flex gap-1 mb-2">{[...Array(5)].map((_,i)=>(<span key={i} className="text-purple-700 text-xl">★</span>))}</div>
+                <div className="font-semibold text-[#2E251D] mb-1">{review.name} {review.verified && <span className="bg-purple-700 text-white text-xs px-2 py-0.5 rounded ml-2">Verified</span>}</div>
+                <div className="font-bold mb-1 text-center">{review.title}</div>
+                <div className="text-[#7c6f5a] text-center text-sm">{review.text}</div>
+              </div>
+            ))}
+          </div>
+          <button onClick={handleNext} disabled={reviewIndex === maxIndex} className="text-3xl px-2 py-1 rounded-full bg-white shadow hover:bg-[#ede5d8] disabled:opacity-30">&#8594;</button>
         </div>
       </section>
     </div>
